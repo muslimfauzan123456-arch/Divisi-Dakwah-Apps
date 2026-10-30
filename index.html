@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dakwah App & Management System - Al Minhaj IIBS</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter & Amiri -->
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        islamic: {
+                            bg: '#f0fdf4',       /* Hijau Muda Soft */
+                            card: '#ffffff',     /* Card Putih */
+                            dark: '#064e3b',     /* Hijau Tua Utama (Emerald-900) */
+                            medium: '#047857',   /* Hijau Akses (Emerald-700) */
+                            gold: '#d4af37',     /* Emas Utama */
+                            goldDark: '#aa820a', /* Emas Shadow */
+                            goldGlow: '#ffd700'  /* Emas Glow */
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Amiri', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Embossed Gold & Neon Glow Styling */
+        .gold-emboss {
+            border: 2px solid #d4af37;
+            box-shadow: 
+                0 4px 6px -1px rgba(6, 78, 59, 0.2), 
+                inset 0 1px 2px rgba(255, 235, 150, 0.9),
+                inset 0 -2px 3px rgba(170, 130, 10, 0.7);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .gold-emboss:hover {
+            border-color: #ffd700;
+            box-shadow: 
+                0 0 14px rgba(212, 175, 55, 0.5), 
+                inset 0 1px 2px rgba(255, 255, 255, 0.9),
+                inset 0 -2px 3px rgba(170, 130, 10, 0.8);
+            transform: translateY(-1px);
+        }
+
+        .gold-emboss:active {
+            transform: scale(0.96);
+            box-shadow: 
+                0 0 22px rgba(255, 215, 0, 0.8),
+                inset 0 0 10px rgba(212, 175, 55, 0.9) !important;
+        }
+
+        .glow-effect {
+            position: relative;
+        }
+        .glow-effect:active::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: inherit;
+            background: radial-gradient(circle, rgba(255,215,0,0.8) 0%, rgba(6,78,59,0) 70%);
+            z-index: -1;
+            animation: pulse-glow 0.4s ease-out;
+        }
+
+        @keyframes pulse-glow {
+            0% { opacity: 1; transform: scale(0.95); }
+            100% { opacity: 0; transform: scale(1.15); }
+        }
+
+        .islamic-pattern {
+            background-color: #064e3b;
+            background-image: radial-gradient(#d4af37 0.8px, transparent 0.8px), radial-gradient(#d4af37 0.8px, #064e3b 0.8px);
+            background-size: 28px 28px;
+            background-position: 0 0, 14px 14px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f0fdf4;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #047857;
+            border-radius: 9999px;
+        }
+
+        @media print {
+            body * { visibility: hidden; }
+            #printableArea, #printableArea * { visibility: visible; }
+            #printableArea { position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body class="bg-islamic-bg text-gray-800 font-sans min-h-screen flex flex-col antialiased selection:bg-islamic-gold selection:text-islamic-dark">
+
+    <!-- ========================================================================= -->
+    <!-- 1. HALAMAN LOGIN UTAMA (VIEW 1) -->
+    <!-- ========================================================================= -->
+    <div id="view-login" class="min-h-screen w-full flex items-center justify-center p-4 islamic-pattern relative overflow-hidden">
+        <div class="w-full max-w-md bg-white/95 backdrop-blur-md rounded-3xl p-6 sm:p-8 border-2 border-islamic-gold shadow-2xl relative z-10 space-y-6">
+            
+            <!-- Branding Header -->
+            <div class="text-center space-y-2">
+                <div class="w-20 h-20 bg-islamic-dark text-islamic-gold rounded-3xl mx-auto flex items-center justify-center text-3xl gold-emboss shadow-lg">
+                    <i class="fa-solid fa-kaaba"></i>
+                </div>
+                <h1 class="text-2xl font-black text-islamic-dark uppercase tracking-wider">Dakwah App</h1>
+                <div class="inline-flex items-center gap-1.5 bg-islamic-dark text-islamic-gold px-3 py-1 rounded-full border border-islamic-gold shadow-sm">
+                    <i class="fa-solid fa-star text-[10px]"></i>
+                    <span class="text-xs font-bold tracking-wide">Al Minhaj IIBS</span>
+                </div>
+                <p class="text-xs text-gray-500 font-medium">Pondok Pesantren Minhaj Shahabah International</p>
+            </div>
+
+            <!-- Form Login Manual -->
+            <form onsubmit="handleManualLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Pilih Hak Akses / Role</label>
+                    <select id="loginRoleSelect" class="w-full p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs font-bold text-islamic-dark focus:outline-none focus:ring-2 focus:ring-islamic-medium">
+                        <option value="SUPER_ADMIN">👑 Super Admin Divisi Dakwah</option>
+                        <option value="PENGAWAS">🔍 Pengawas / Koordinator Dakwah</option>
+                        <option value="ANGGOTA" selected>👥 Anggota (Asatidzan, Ustadzaat, Karyawan)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">NIP / Username</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-user text-gray-400 absolute left-3.5 top-3 text-xs"></i>
+                        <input type="text" id="loginUser" required value="202601" placeholder="Masukkan NIP / Username" class="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-emerald-200 rounded-xl text-xs font-medium focus:outline-none focus:border-islamic-dark">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Kata Sandi</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-lock text-gray-400 absolute left-3.5 top-3 text-xs"></i>
+                        <input type="password" id="loginPass" required value="••••••••" placeholder="••••••••" class="w-full pl-9 pr-3 py-2.5 bg-gray-50 border border-emerald-200 rounded-xl text-xs font-medium focus:outline-none focus:border-islamic-dark">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-islamic-dark text-islamic-gold rounded-xl font-bold text-xs gold-emboss hover:scale-[1.01] active:scale-95 transition">
+                    <i class="fa-solid fa-right-to-bracket mr-1.5"></i> Masuk Sistem Dakwah
+                </button>
+            </form>
+
+            <div class="relative flex items-center justify-center my-4">
+                <div class="border-t border-gray-200 w-full"></div>
+                <span class="bg-white px-3 text-[10px] font-extrabold text-gray-400 uppercase tracking-wider absolute">Atau Masuk Demo Instant</span>
+            </div>
+
+            <!-- Quick Demo Switches -->
+            <div class="grid grid-cols-1 gap-2">
+                <button onclick="loginAs('SUPER_ADMIN')" class="p-2.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-xl flex items-center justify-between text-xs font-bold text-islamic-dark transition">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-user-shield text-islamic-gold text-sm"></i> Demo Super Admin
+                    </span>
+                    <span class="text-[9px] bg-emerald-800 text-white px-2 py-0.5 rounded-full font-bold">Akses Penuh + Kas</span>
+                </button>
+
+                <button onclick="loginAs('PENGAWAS')" class="p-2.5 bg-amber-50 hover:bg-amber-100 border border-amber-300 rounded-xl flex items-center justify-between text-xs font-bold text-amber-900 transition">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-eye text-amber-600 text-sm"></i> Demo Pengawas / Murabbi
+                    </span>
+                    <span class="text-[9px] bg-amber-800 text-white px-2 py-0.5 rounded-full font-bold">Monitoring Kajian</span>
+                </button>
+
+                <button onclick="loginAs('ANGGOTA')" class="p-2.5 bg-blue-50 hover:bg-blue-100 border border-blue-300 rounded-xl flex items-center justify-between text-xs font-bold text-blue-900 transition">
+                    <span class="flex items-center gap-2">
+                        <i class="fa-solid fa-users text-blue-600 text-sm"></i> Demo Anggota / Peserta
+                    </span>
+                    <span class="text-[9px] bg-blue-800 text-white px-2 py-0.5 rounded-full font-bold">Asatidzan & Staf</span>
+                </button>
+            </div>
+
+            <p class="text-[10px] text-center text-gray-400 font-medium">© 2026 Divisi Dakwah Minhaj Shahabah IIBS. All Rights Reserved.</p>
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- 2. TAMPILAN ANGGOTA / PESERTA (MOBILE FIRST) (VIEW 2) -->
+    <!-- ========================================================================= -->
+    <div id="view-anggota" class="hidden min-h-screen pb-24 max-w-md mx-auto bg-islamic-bg shadow-2xl border-x border-emerald-100 relative">
+        
+        <!-- Header Utama Mobile -->
+        <header class="sticky top-0 z-30 bg-islamic-dark text-white p-4 shadow-md rounded-b-3xl border-b-2 border-islamic-gold">
+            <div class="flex items-center justify-between">
+                <!-- Left Hamburger Drawer Button -->
+                <button onclick="toggleAnggotaDrawer()" class="w-9 h-9 rounded-xl bg-islamic-medium flex items-center justify-center text-islamic-gold gold-emboss glow-effect">
+                    <i class="fa-solid fa-bars text-sm"></i>
+                </button>
+
+                <!-- Center App Title -->
+                <div class="text-center">
+                    <h1 class="text-sm font-black text-islamic-gold tracking-wider">Dakwah App</h1>
+                    <p class="text-[9px] text-emerald-100 font-extrabold uppercase">Al Minhaj IIBS</p>
+                </div>
+
+                <!-- Right Notification Bell -->
+                <button onclick="showNotificationAlert()" class="w-9 h-9 rounded-xl bg-islamic-medium flex items-center justify-center text-islamic-gold gold-emboss glow-effect relative">
+                    <i class="fa-solid fa-bell text-sm"></i>
+                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 absolute top-1.5 right-1.5 ring-2 ring-islamic-dark animate-ping"></span>
+                    <span class="w-2 h-2 rounded-full bg-red-500 absolute top-1.5 right-1.5 ring-2 ring-islamic-dark"></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="p-4 space-y-4">
+
+            <!-- HERO WIDGET INFORMATIF -->
+            <div class="bg-white rounded-3xl p-4 border border-emerald-100 shadow-sm space-y-3">
+                
+                <!-- Realtime Digital Clock & Dates -->
+                <div class="flex justify-between items-center border-b border-emerald-50 pb-3">
+                    <div>
+                        <span class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wide bg-emerald-50 px-2 py-0.5 rounded-full" id="hijriDate">14 Rabiul Akhir 1448 H</span>
+                        <p class="text-xs font-extrabold text-gray-800 mt-1" id="gregorianDate">Jumat, 30 Oktober 2026</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-xl font-black text-islamic-dark font-mono tracking-tight" id="realtimeClock">15:45:10</span>
+                        <span class="text-[9px] block text-emerald-600 font-extrabold">WIB (Waktu Lokal)</span>
+                    </div>
+                </div>
+
+                <!-- Attendance Status & Ongoing Activity -->
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="p-2.5 bg-emerald-50/70 rounded-2xl border border-emerald-100">
+                        <span class="text-[9px] text-gray-500 font-bold uppercase block">Kehadiran Anggota</span>
+                        <span class="text-base font-black text-islamic-dark">96.5%</span>
+                        <span class="text-[9px] text-emerald-700 font-bold block"><i class="fa-solid fa-circle-check"></i> Sangat Disiplin</span>
+                    </div>
+
+                    <div class="p-2.5 bg-amber-50/70 rounded-2xl border border-amber-100">
+                        <span class="text-[9px] text-amber-800 font-bold uppercase block">Kegiatan Berlangsung</span>
+                        <span class="text-xs font-bold text-amber-950 block truncate">Kajian Bulanan Asatidzan</span>
+                        <span class="text-[9px] text-amber-700 block">Aula Utama • Ust. Dr. Abdullah</span>
+                    </div>
+                </div>
+
+                <!-- 5 Prayer Times Bar -->
+                <div class="pt-1">
+                    <div class="flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase mb-1.5">
+                        <span>Jadwal Sholat 5 Waktu</span>
+                        <span class="text-emerald-800 font-extrabold">Berikutnya: Maghrib (17:52)</span>
+                    </div>
+                    <div class="grid grid-cols-5 gap-1 text-center text-[10px]">
+                        <div class="p-1.5 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="block text-gray-400">Subuh</span>
+                            <span class="font-bold text-gray-800">04:22</span>
+                        </div>
+                        <div class="p-1.5 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="block text-gray-400">Dzuhur</span>
+                            <span class="font-bold text-gray-800">11:45</span>
+                        </div>
+                        <div class="p-1.5 bg-islamic-dark text-islamic-gold rounded-xl font-bold gold-emboss">
+                            <span class="block text-yellow-300">Ashar</span>
+                            <span>15:15</span>
+                        </div>
+                        <div class="p-1.5 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="block text-gray-400">Maghrib</span>
+                            <span class="font-bold text-gray-800">17:52</span>
+                        </div>
+                        <div class="p-1.5 bg-gray-50 rounded-xl border border-gray-200">
+                            <span class="block text-gray-400">Isya</span>
+                            <span class="font-bold text-gray-800">19:02</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- 8 GRID MENU UTAMA -->
+            <div>
+                <p class="text-xs font-extrabold text-islamic-dark uppercase tracking-wider mb-2.5 px-1 flex items-center justify-between">
+                    <span>Layanan Utama Dakwah</span>
+                    <span class="text-[10px] text-emerald-600 font-bold">8 Fitur Utama</span>
+                </p>
+
+                <div class="grid grid-cols-4 gap-3 text-center">
+                    
+                    <button onclick="openAnggotaModal('Akidah', 'Materi & kurikulum penguatan akidah Ahlussunnah wal Jamaah untuk seluruh Asatidzan dan Pegawai Pesantren Minhaj Shahabah IIBS.')" class="p-3 bg-white rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center gap-1.5 glow-effect hover:scale-105 transition">
+                        <div class="w-10 h-10 rounded-2xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-lg gold-emboss">
+                            <i class="fa-solid fa-book-quran"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-800 leading-tight">Akidah</span>
+                    </button>
+
+                    <button onclick="openAnggotaModal('Fikih Ibadah', 'Panduan fikih ibadah harian, tata cara thaharah, fikih muamalah, dan tuntunan sholat berjamaah.')" class="p-3 bg-white rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center gap-1.5 glow-effect hover:scale-105 transition">
+                        <div class="w-10 h-10 rounded-2xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-lg gold-emboss">
+                            <i class="fa-solid fa-hands-praying"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-800 leading-tight">Fikih Ibadah</span>
+                    </button>
+
+                    <button onclick="openAnggotaModal('Tahsin Qur\'an', 'Jadwal bimbingan tajwid, talaqqi, dan sertifikasi kelancaran bacaan Al-Qur\'an bagi seluruh Anggota.')" class="p-3 bg-white rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center gap-1.5 glow-effect hover:scale-105 transition">
+                        <div class="w-10 h-10 rounded-2xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-lg gold-emboss">
+                            <i class="fa-solid fa-microphone-lines"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-800 leading-tight">Tahsin Qur'an</span>
+                    </button>
+
+                    <button onclick="openAnggotaModal('Fatwa Pilihan', 'Kumpulan keputusan fatwa ulama kontemporer terpercaya sebagai pedoman dakwah dan muamalah.')" class="p-3 bg-white rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center gap-1.5 glow-effect hover:scale-105 transition">
+                        <div class="w-10 h-10 rounded-2xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-lg gold-emboss">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-800 leading-tight">Fatwa Pilihan</span>
+                    </button>
+
+                    <button onclick="openTanyaUstadzModal()" class="p-3 bg-white rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center gap-1.5 glow-effect hover:scale-105 transition">
+                        <div class="w-10 h-10 rounded-2xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-lg gold-emboss">
+                            <i class="fa-solid fa-circle-question"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-800 leading-tight">Tanya Ustadz</span>
+                    </button>
+
+                    <button onclick="openAnggotaModal('Kontak Admin', 'Layanan komunikasi langsung dengan Sekretariat Divisi Dakwah Minhaj Shahabah IIBS (Call / WhatsApp: +62 812-3456-7890).')" class="p-3 bg-white rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center gap-1.5 glow-effect hover:scale-105 transition">
+                        <div class="w-10 h-10 rounded-2xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-lg gold-emboss">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-800 leading-tight">Kontak Admin</span>
+                    </button>
+
+                    <button onclick="openAnggotaModal('Perpustakaan Digital', 'Akses e-book kitab-kitab turats, terjemahan hadits shahih, dan ringkasan jurnal dakwah.')" class="p-3 bg-white rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center gap-1.5 glow-effect hover:scale-105 transition">
+                        <div class="w-10 h-10 rounded-2xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-lg gold-emboss">
+                            <i class="fa-solid fa-book-bookmark"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-800 leading-tight">Perpustakaan</span>
+                    </button>
+
+                    <button onclick="openAnggotaModal('Doa & Zikir Harian', 'Kumpulan zikir pagi dan petang, zikir setelah sholat fardhu, serta doa-doa harian sesuai sunnah.')" class="p-3 bg-white rounded-2xl border border-emerald-100 shadow-sm flex flex-col items-center justify-center gap-1.5 glow-effect hover:scale-105 transition">
+                        <div class="w-10 h-10 rounded-2xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-lg gold-emboss">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <span class="text-[10px] font-bold text-gray-800 leading-tight">Doa & Zikir</span>
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- SALURAN LIVE STREAMING -->
+            <div class="bg-white rounded-3xl p-4 border border-emerald-100 shadow-sm space-y-3">
+                <div class="flex justify-between items-center">
+                    <p class="text-xs font-extrabold text-islamic-dark uppercase tracking-wider flex items-center gap-1.5">
+                        <i class="fa-solid fa-tower-broadcast text-red-500 animate-pulse"></i> Saluran Live Streaming
+                    </p>
+                    <span class="text-[9px] bg-red-100 text-red-700 px-2.5 py-0.5 rounded-full font-bold animate-pulse flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-red-600"></span> LIVE BROADCAST
+                    </span>
+                </div>
+
+                <div class="space-y-2">
+                    <!-- Stream Item 1 -->
+                    <div class="p-2.5 bg-gray-50 rounded-2xl border border-gray-200 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-sm gold-emboss">
+                                <i class="fa-solid fa-kaaba"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-gray-800">Masjidil Haram</p>
+                                <p class="text-[9px] text-gray-500">Makkah Al Mukarramah Direct</p>
+                            </div>
+                        </div>
+                        <button onclick="playStream('Masjidil Haram (Makkah)')" class="px-3 py-1 bg-islamic-dark text-white rounded-lg text-[10px] font-bold gold-emboss glow-effect">
+                            <i class="fa-solid fa-play text-[9px] mr-1"></i> Putar
+                        </button>
+                    </div>
+
+                    <!-- Stream Item 2 -->
+                    <div class="p-2.5 bg-gray-50 rounded-2xl border border-gray-200 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-sm gold-emboss">
+                                <i class="fa-solid fa-mosque"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-gray-800">Masjid Nabawi</p>
+                                <p class="text-[9px] text-gray-500">Madinah Al Munawwarah Direct</p>
+                            </div>
+                        </div>
+                        <button onclick="playStream('Masjid Nabawi (Madinah)')" class="px-3 py-1 bg-islamic-dark text-white rounded-lg text-[10px] font-bold gold-emboss glow-effect">
+                            <i class="fa-solid fa-play text-[9px] mr-1"></i> Putar
+                        </button>
+                    </div>
+
+                    <!-- Stream Item 3 -->
+                    <div class="p-2.5 bg-gray-50 rounded-2xl border border-gray-200 flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-9 h-9 rounded-xl bg-islamic-dark text-islamic-gold flex items-center justify-center text-sm gold-emboss">
+                                <i class="fa-solid fa-tv"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs font-bold text-gray-800">Rodja TV</p>
+                                <p class="text-[9px] text-gray-500">Saluran TV & Radio Sunnah</p>
+                            </div>
+                        </div>
+                        <button onclick="playStream('Rodja TV Satellite')" class="px-3 py-1 bg-islamic-dark text-white rounded-lg text-[10px] font-bold gold-emboss glow-effect">
+                            <i class="fa-solid fa-play text-[9px] mr-1"></i> Putar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- FLOATING BOTTOM BAR -->
+        <nav class="fixed bottom-3 left-1/2 -translate-x-1/2 w-[92%] max-w-md bg-islamic-dark/95 backdrop-blur-md rounded-3xl p-2 border-2 border-islamic-gold shadow-2xl z-30 flex justify-around items-center text-white">
+            <button class="flex flex-col items-center gap-0.5 text-islamic-gold">
+                <i class="fa-solid fa-house text-base"></i>
+                <span class="text-[9px] font-bold">Beranda</span>
+            </button>
+            <button onclick="openAnggotaModal('Jadwal Sholat 5 Waktu', 'Subuh: 04:22 | Dzuhur: 11:45 | Ashar: 15:15 | Maghrib: 17:52 | Isya: 19:02')" class="flex flex-col items-center gap-0.5 text-gray-300 hover:text-islamic-gold">
+                <i class="fa-solid fa-clock text-base"></i>
+                <span class="text-[9px] font-bold">Sholat</span>
+            </button>
+            <button onclick="openAnggotaModal('Jadwal Kajian Rutin', '1. Kajian Bulanan Asatidzan (Jumat Ba\'da Ashar)\n2. Talaqqi Qur\'an Staf (Rabu Ba\'da Isya)')" class="flex flex-col items-center gap-0.5 text-gray-300 hover:text-islamic-gold">
+                <i class="fa-solid fa-calendar-days text-base"></i>
+                <span class="text-[9px] font-bold">Kajian</span>
+            </button>
+            <button onclick="toggleAnggotaDrawer()" class="flex flex-col items-center gap-0.5 text-gray-300 hover:text-islamic-gold">
+                <i class="fa-solid fa-circle-user text-base"></i>
+                <span class="text-[9px] font-bold">Profil</span>
+            </button>
+        </nav>
+
+        <!-- ANGGOTA DRAWER SLIDE MODAL -->
+        <div id="anggotaDrawer" class="fixed inset-0 bg-black/60 z-50 flex justify-start opacity-0 pointer-events-none transition-opacity duration-200">
+            <div class="w-3/4 max-w-xs bg-white h-full p-5 space-y-5 border-r-2 border-islamic-gold flex flex-col justify-between">
+                <div class="space-y-4">
+                    <div class="flex items-center gap-3 border-b border-gray-100 pb-4">
+                        <div class="w-12 h-12 rounded-full bg-islamic-gold text-islamic-dark font-black flex items-center justify-center text-sm border-2 border-islamic-dark">
+                            UST
+                        </div>
+                        <div>
+                            <p class="font-extrabold text-sm text-islamic-dark" id="drawerUserName">Ust. Hamzah, Lc.</p>
+                            <p class="text-[10px] text-gray-500" id="drawerUserRole">Asatidzan / Pengajar IIBS</p>
+                            <p class="text-[9px] font-mono text-emerald-700">NIP: 2026-001</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2 text-xs font-bold text-gray-700">
+                        <button onclick="alert('Pembaruan Profil Berhasil')" class="w-full text-left p-2.5 rounded-xl hover:bg-emerald-50 flex items-center gap-2">
+                            <i class="fa-solid fa-sliders text-islamic-dark"></i> Pengaturan Akun
+                        </button>
+                        <button onclick="alert('Versi Aplikasi: v2.4 - Dakwah App Al Minhaj')" class="w-full text-left p-2.5 rounded-xl hover:bg-emerald-50 flex items-center gap-2">
+                            <i class="fa-solid fa-circle-info text-islamic-dark"></i> Informasi Sistem
+                        </button>
+                    </div>
+                </div>
+
+                <button onclick="logoutWithKaffarat()" class="w-full text-left p-3 rounded-xl bg-red-50 text-red-600 font-bold text-xs flex items-center gap-2">
+                    <i class="fa-solid fa-right-from-bracket"></i> Keluar / Logout Sesi
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- 3. DASHBOARD MANAJEMEN ADMIN & PENGAWAS (DESKTOP/TAB) (VIEW 3) -->
+    <!-- ========================================================================= -->
+    <div id="view-dashboard" class="hidden min-h-screen flex flex-col">
+
+        <!-- Header Atas Portal Pengelola -->
+        <header class="sticky top-0 z-40 bg-islamic-dark text-white border-b-2 border-islamic-gold shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+                
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white text-islamic-dark flex items-center justify-center font-bold text-xl gold-emboss">
+                        <i class="fa-solid fa-shield-halved text-islamic-gold"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-sm md:text-base font-extrabold text-islamic-gold flex items-center gap-2">
+                            Panel Pengelola & Pengawasan Dakwah
+                        </h1>
+                        <p class="text-[10px] text-emerald-100 font-medium">Pesantren Minhaj Shahabah International Islamic Boarding School</p>
+                    </div>
+                </div>
+
+                <!-- Active Role Badge & Logout Button -->
+                <div class="flex items-center gap-3">
+                    <div class="bg-islamic-medium border border-islamic-gold rounded-xl px-3 py-1 text-xs flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-islamic-gold"></i>
+                        <span class="text-gray-200 hidden sm:inline">Role:</span>
+                        <span id="activeRoleBadge" class="text-yellow-300 font-black uppercase">SUPER ADMIN</span>
+                    </div>
+
+                    <button onclick="logoutWithKaffarat()" class="p-2 bg-red-600/80 hover:bg-red-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+                        <i class="fa-solid fa-power-off"></i>
+                        <span class="hidden md:inline">Keluar</span>
+                    </button>
+                </div>
+
+            </div>
+        </header>
+
+        <!-- Main Body Dashboard -->
+        <div class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full flex flex-col lg:flex-row gap-6">
+
+            <!-- Sidebar Navigation Left -->
+            <aside class="w-full lg:w-64 bg-white rounded-3xl p-4 border border-emerald-100 shadow-sm space-y-1 shrink-0 h-fit">
+                <div class="px-3 py-1 text-[10px] font-bold text-gray-400 uppercase tracking-wider">Navigasi Utama</div>
+
+                <button onclick="switchDashTab('ikhtisar')" id="dashnav-ikhtisar" class="dash-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold bg-islamic-dark text-islamic-gold gold-emboss">
+                    <i class="fa-solid fa-chart-pie w-4 text-sm"></i> Ikhtisar Ringkas
+                </button>
+
+                <button onclick="switchDashTab('kehadiran')" id="dashnav-kehadiran" class="dash-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-medium text-gray-700 hover:bg-emerald-50 transition">
+                    <i class="fa-solid fa-clipboard-user w-4 text-emerald-600 text-sm"></i> Presensi Anggota
+                </button>
+
+                <button onclick="switchDashTab('kajian')" id="dashnav-kajian" class="dash-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-medium text-gray-700 hover:bg-emerald-50 transition">
+                    <i class="fa-solid fa-calendar-check w-4 text-emerald-600 text-sm"></i> Kelola Jadwal Kajian
+                </button>
+
+                <button onclick="switchDashTab('tanya')" id="dashnav-tanya" class="dash-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium text-gray-700 hover:bg-emerald-50 transition">
+                    <div class="flex items-center gap-3">
+                        <i class="fa-solid fa-comments w-4 text-emerald-600 text-sm"></i> Tanya Ustadz
+                    </div>
+                    <span class="bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold">2</span>
+                </button>
+
+                <!-- STRICTLY ADMIN ONLY NAVIGATION ITEMS -->
+                <div class="admin-only-sec pt-2 border-t border-gray-100">
+                    <div class="px-3 py-1 text-[10px] font-bold text-amber-800 uppercase tracking-wider">Khusus Super Admin</div>
+                    
+                    <button onclick="switchDashTab('keuangan')" id="dashnav-keuangan" class="dash-btn admin-only-nav w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium text-gray-700 hover:bg-emerald-50 transition">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-vault w-4 text-emerald-600 text-sm"></i> Keuangan Canggih
+                        </div>
+                        <span class="text-[9px] bg-amber-100 text-amber-800 font-black px-1.5 py-0.5 rounded border border-amber-300">ADMIN</span>
+                    </button>
+
+                    <button onclick="switchDashTab('pengawas')" id="dashnav-pengawas" class="dash-btn admin-only-nav w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium text-gray-700 hover:bg-emerald-50 transition">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-users-gear w-4 text-emerald-600 text-sm"></i> Tim & Pengawas
+                        </div>
+                        <span class="text-[9px] bg-amber-100 text-amber-800 font-black px-1.5 py-0.5 rounded border border-amber-300">ADMIN</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Dynamic Panel Content -->
+            <main class="flex-1 space-y-6">
+
+                <!-- PANEL 1: IKHTISAR RINGKAS -->
+                <div id="dashtab-ikhtisar" class="dash-content space-y-5">
+                    <div class="islamic-pattern rounded-3xl p-5 text-white border-2 border-islamic-gold shadow-md flex justify-between items-center">
+                        <div>
+                            <span class="text-[10px] bg-islamic-gold text-islamic-dark px-2.5 py-0.5 rounded-full font-extrabold uppercase">Sistem Terintegrasi</span>
+                            <h2 class="text-lg font-bold text-yellow-300 mt-1" id="dashWelcomeTitle">Ahlan wa Sahlan, Pengelola Dakwah</h2>
+                            <p class="text-xs text-emerald-100">Monitoring kehadiran Asatidzan, jadwal kajian rutin, dan operasional Divisi Dakwah.</p>
+                        </div>
+                    </div>
+
+                    <!-- KPI Cards -->
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase">Total Anggota/Peserta</span>
+                            <p class="text-2xl font-extrabold text-islamic-dark">154</p>
+                            <span class="text-[10px] text-emerald-600 font-bold">Asatidzan & Staf</span>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase">Presensi Rata-Rata</span>
+                            <p class="text-2xl font-extrabold text-islamic-dark">96.5%</p>
+                            <span class="text-[10px] text-emerald-600 font-bold">Disiplin Tinggi</span>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm admin-only-card">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase">Kas Divisi Dakwah</span>
+                            <p class="text-xl font-extrabold text-islamic-dark" id="dashKpiKas">Rp 48.250.000</p>
+                            <span class="text-[10px] text-emerald-600 font-bold">Surplus</span>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm">
+                            <span class="text-[10px] font-bold text-gray-400 uppercase">Pertanyaan Masuk</span>
+                            <p class="text-2xl font-extrabold text-red-600">2</p>
+                            <span class="text-[10px] text-gray-400">Menunggu Jawaban</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 2: MODUL KEUANGAN CANGGIH (STRICTLY SUPER ADMIN ONLY) -->
+                <div id="dashtab-keuangan" class="dash-content hidden space-y-5">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                        <div>
+                            <h3 class="text-base font-extrabold text-islamic-dark flex items-center gap-2">
+                                <i class="fa-solid fa-vault text-islamic-gold"></i> Modul Keuangan Canggih & Kas Divisi
+                            </h3>
+                            <p class="text-xs text-gray-500">Pencatatan Pemasukan Infaq, Operasional, & Honorarium Pembicara</p>
+                        </div>
+                        <button onclick="openTransModal()" class="px-3.5 py-2 bg-islamic-dark text-white rounded-xl text-xs font-bold gold-emboss glow-effect">
+                            <i class="fa-solid fa-plus text-islamic-gold mr-1"></i> Catat Transaksi Baru
+                        </button>
+                    </div>
+
+                    <!-- Financial Summary Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-gradient-to-br from-islamic-dark to-islamic-medium text-white p-4 rounded-2xl border-2 border-islamic-gold shadow-sm">
+                            <p class="text-[10px] text-emerald-200 font-bold uppercase">Total Kas Utama</p>
+                            <h3 class="text-2xl font-black text-yellow-300 mt-1" id="valTotalKas">Rp 48.250.000</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Pemasukan Bulan Ini</p>
+                            <h3 class="text-xl font-bold text-emerald-700 mt-1" id="valPemasukan">Rp 18.500.000</h3>
+                        </div>
+                        <div class="bg-white p-4 rounded-2xl border border-emerald-100 shadow-sm">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase">Pengeluaran Bulan Ini</p>
+                            <h3 class="text-xl font-bold text-red-600 mt-1" id="valPengeluaran">Rp 6.250.000</h3>
+                        </div>
+                    </div>
+
+                    <!-- Interactive Cashflow Canvas Chart -->
+                    <div class="bg-white p-5 rounded-3xl border border-emerald-100 shadow-sm space-y-3">
+                        <h4 class="text-xs font-extrabold text-islamic-dark uppercase">Grafik Tren Cashflow Bulanan (Pemasukan vs Pengeluaran)</h4>
+                        <div class="w-full h-48 bg-gray-50 rounded-2xl p-2 border border-gray-100 flex items-center justify-center relative">
+                            <canvas id="cashflowChart" class="w-full h-full"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Honorarium Table & Kwitansi -->
+                    <div class="bg-white p-5 rounded-3xl border border-emerald-100 shadow-sm space-y-3">
+                        <h4 class="text-xs font-extrabold text-islamic-dark uppercase">Honorarium Pembicara & Kwitansi Digital</h4>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-emerald-50 text-islamic-dark border-b border-emerald-200">
+                                        <th class="p-2.5 font-bold">Nama Pemateri</th>
+                                        <th class="p-2.5 font-bold">Sesi Kajian</th>
+                                        <th class="p-2.5 font-bold">Total Insentif</th>
+                                        <th class="p-2.5 font-bold text-center">Status</th>
+                                        <th class="p-2.5 font-bold text-center">Cetak Bukti</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr>
+                                        <td class="p-2.5 font-bold text-islamic-dark">Ust. Dr. Abdullah, M.A.</td>
+                                        <td class="p-2.5">4 Sesi Hadits</td>
+                                        <td class="p-2.5 font-bold text-emerald-800">Rp 3.000.000</td>
+                                        <td class="p-2.5 text-center"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Terbayar</span></td>
+                                        <td class="p-2.5 text-center">
+                                            <button onclick="openReceipt('Ust. Dr. Abdullah, M.A.', 'Honorarium Pengajar Kajian Hadits (4 Sesi)', '3.000.000')" class="px-2.5 py-1 bg-islamic-dark text-white rounded-lg text-[10px] font-bold gold-emboss">
+                                                Kwitansi
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2.5 font-bold text-islamic-dark">Ust. Muhammad Zain, Lc.</td>
+                                        <td class="p-2.5">2 Sesi Tahsin Staf</td>
+                                        <td class="p-2.5 font-bold text-emerald-800">Rp 1.500.000</td>
+                                        <td class="p-2.5 text-center"><span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Terbayar</span></td>
+                                        <td class="p-2.5 text-center">
+                                            <button onclick="openReceipt('Ust. Muhammad Zain, Lc.', 'Honorarium Bimbingan Tahsin Staf (2 Sesi)', '1.500.000')" class="px-2.5 py-1 bg-islamic-dark text-white rounded-lg text-[10px] font-bold gold-emboss">
+                                                Kwitansi
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 3: MANAJEMEN TIM & PENGAWAS (STRICTLY SUPER ADMIN ONLY) -->
+                <div id="dashtab-pengawas" class="dash-content hidden space-y-5">
+                    <div class="bg-white p-5 rounded-3xl border border-emerald-100 shadow-sm space-y-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-100 pb-3 gap-2">
+                            <div>
+                                <h3 class="text-sm font-extrabold text-islamic-dark uppercase flex items-center gap-2">
+                                    <i class="fa-solid fa-users-gear text-islamic-gold"></i> Penunjukan & Manajemen Tim Pengawas
+                                </h3>
+                                <p class="text-xs text-gray-500">Super Admin dapat menunjuk, menambah, dan mengaktifkan akun Pengawas / Murabbi.</p>
+                            </div>
+                            <button onclick="addNewPengawasPrompt()" class="px-3.5 py-2 bg-islamic-dark text-white rounded-xl text-xs font-bold gold-emboss">
+                                <i class="fa-solid fa-user-plus mr-1"></i> Penunjukan Pengawas Baru
+                            </button>
+                        </div>
+
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-emerald-50 text-islamic-dark border-b border-emerald-200">
+                                        <th class="p-3 font-bold">Nama Pengawas / Murabbi</th>
+                                        <th class="p-3 font-bold">NIP / ID</th>
+                                        <th class="p-3 font-bold">Tugas Pengawasan</th>
+                                        <th class="p-3 font-bold text-center">Status Akses</th>
+                                        <th class="p-3 font-bold text-center">Aksi Admin</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pengawasTableBody" class="divide-y divide-gray-100">
+                                    <tr class="hover:bg-emerald-50/50">
+                                        <td class="p-3 font-bold text-islamic-dark">Ust. Faisal Farhan</td>
+                                        <td class="p-3 text-gray-500 font-mono">PGW-2026-001</td>
+                                        <td class="p-3 text-gray-600">Pengawas Presensi Asatidzan & Karyawan</td>
+                                        <td class="p-3 text-center"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2.5 py-0.5 rounded-full font-bold">Aktif Ditunjuk</span></td>
+                                        <td class="p-3 text-center">
+                                            <button onclick="alert('Akses Pengawas Ust. Faisal Farhan diperbarui')" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-[10px] font-bold">Kelola Akses</button>
+                                        </td>
+                                    </tr>
+
+                                    <tr class="hover:bg-emerald-50/50">
+                                        <td class="p-3 font-bold text-islamic-dark">Ust. Syamsul Bahri</td>
+                                        <td class="p-3 text-gray-500 font-mono">PGW-2026-002</td>
+                                        <td class="p-3 text-gray-600">Pengawas Kajian Rutin & Tahsin</td>
+                                        <td class="p-3 text-center"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2.5 py-0.5 rounded-full font-bold">Aktif Ditunjuk</span></td>
+                                        <td class="p-3 text-center">
+                                            <button onclick="alert('Akses Pengawas Ust. Syamsul Bahri diperbarui')" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-[10px] font-bold">Kelola Akses</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 4: MONITORING KEHADIRAN -->
+                <div id="dashtab-kehadiran" class="dash-content hidden space-y-4">
+                    <div class="bg-white p-5 rounded-3xl border border-emerald-100 shadow-sm space-y-4">
+                        <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+                            <h3 class="text-sm font-extrabold text-islamic-dark uppercase">Monitoring Presensi Asatidzan & Karyawan</h3>
+                            <button onclick="alert('Rekap presensi berhasil diunduh (PDF)')" class="px-3 py-1.5 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-xl text-xs font-bold">Unduh Laporan</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left text-xs border-collapse">
+                                <thead>
+                                    <tr class="bg-emerald-50 text-islamic-dark border-b border-emerald-200">
+                                        <th class="p-2.5 font-bold">Nama Anggota</th>
+                                        <th class="p-2.5 font-bold">Status / Peran</th>
+                                        <th class="p-2.5 font-bold">Kajian Bulanan</th>
+                                        <th class="p-2.5 font-bold">Sholat Jamaah</th>
+                                        <th class="p-2.5 font-bold text-center">Status Verification</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-100">
+                                    <tr>
+                                        <td class="p-2.5 font-bold text-islamic-dark">Ust. Hamzah, Lc.</td>
+                                        <td class="p-2.5 text-gray-500">Asatidzan Pengajar</td>
+                                        <td class="p-2.5 text-emerald-700 font-bold"><i class="fa-solid fa-check"></i> Hadir</td>
+                                        <td class="p-2.5 text-emerald-700 font-bold"><i class="fa-solid fa-check"></i> Hadir (5/5)</td>
+                                        <td class="p-2.5 text-center"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Terverifikasi</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="p-2.5 font-bold text-islamic-dark">Ahmad Syafii, S.Pd.</td>
+                                        <td class="p-2.5 text-gray-500">Karyawan Pondok</td>
+                                        <td class="p-2.5 text-emerald-700 font-bold"><i class="fa-solid fa-check"></i> Hadir</td>
+                                        <td class="p-2.5 text-emerald-700 font-bold"><i class="fa-solid fa-check"></i> Hadir (5/5)</td>
+                                        <td class="p-2.5 text-center"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2 py-0.5 rounded-full font-bold">Terverifikasi</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 5: KELOLA KAJIAN -->
+                <div id="dashtab-kajian" class="dash-content hidden space-y-4">
+                    <div class="bg-white p-5 rounded-3xl border border-emerald-100 shadow-sm space-y-3">
+                        <h3 class="text-sm font-extrabold text-islamic-dark uppercase">Kelola & Publikasi Jadwal Kajian</h3>
+                        <p class="text-xs text-gray-500">Jadwal yang dipublikasikan akan langsung muncul di aplikasi mobile seluruh Anggota.</p>
+                        
+                        <form onsubmit="publishKajianEvent(event)" class="space-y-3 text-xs pt-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                <div>
+                                    <label class="font-bold text-gray-700 block mb-1">Judul Kajian / Agenda</label>
+                                    <input type="text" required placeholder="Contoh: Kajian Fikih Muamalah" class="w-full p-2.5 bg-gray-50 border border-emerald-200 rounded-xl">
+                                </div>
+                                <div>
+                                    <label class="font-bold text-gray-700 block mb-1">Pemateri / Ustadz</label>
+                                    <input type="text" required placeholder="Contoh: Ust. Dr. Abdullah" class="w-full p-2.5 bg-gray-50 border border-emerald-200 rounded-xl">
+                                </div>
+                            </div>
+                            <button type="submit" class="px-4 py-2.5 bg-islamic-dark text-white rounded-xl text-xs font-bold gold-emboss">
+                                <i class="fa-solid fa-bullhorn mr-1"></i> Publikasikan ke Aplikasi Anggota
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- PANEL 6: TANYA USTADZ -->
+                <div id="dashtab-tanya" class="dash-content hidden space-y-4">
+                    <div class="bg-white p-5 rounded-3xl border border-emerald-100 shadow-sm space-y-3">
+                        <h3 class="text-sm font-extrabold text-islamic-dark uppercase">Jawaban Pertanyaan Masuk</h3>
+                        <div class="space-y-3">
+                            <div class="p-3 bg-emerald-50/60 rounded-2xl border border-emerald-100 space-y-2">
+                                <div class="flex justify-between items-center text-[10px]">
+                                    <span class="font-bold text-islamic-dark">Dari: Ust. Hamzah, Lc.</span>
+                                    <span class="text-gray-400">Hari ini 10:15 WIB</span>
+                                </div>
+                                <p class="text-xs text-gray-800 font-medium">"Bagaimana hukum penggunaan pembayaran digital dalam transaksi zakat mal pondok?"</p>
+                                <button onclick="alert('Form Balas Pertanyaan Ditampilkan')" class="px-3 py-1 bg-islamic-dark text-white rounded-lg text-[10px] font-bold gold-emboss">Jawab Pertanyaan</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- MODALS & DIALOGS SYSTEM -->
+    <!-- ========================================================================= -->
+
+    <!-- ANGGOTA DETAIL MODAL -->
+    <div id="anggotaModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 border-2 border-islamic-gold shadow-2xl space-y-4 text-center">
+            <div class="w-14 h-14 rounded-2xl bg-islamic-dark text-islamic-gold mx-auto flex items-center justify-center text-2xl gold-emboss">
+                <i class="fa-solid fa-kaaba"></i>
+            </div>
+            <h3 class="font-extrabold text-islamic-dark text-base" id="anggotaModalTitle">Detail Layanan</h3>
+            <p class="text-xs text-gray-600 whitespace-pre-line" id="anggotaModalBody">Deskripsi layanan dakwah.</p>
+            <button onclick="closeAnggotaModal()" class="w-full py-2.5 bg-islamic-dark text-white rounded-xl text-xs font-bold gold-emboss">Tutup</button>
+        </div>
+    </div>
+
+    <!-- MODAL TANYA USTADZ FORM -->
+    <div id="tanyaUstadzModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 border-2 border-islamic-gold shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
+                <h3 class="font-extrabold text-islamic-dark text-xs uppercase">Form Tanya Ustadz</h3>
+                <button onclick="closeTanyaUstadzModal()" class="text-gray-400"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <form onsubmit="submitPertanyaan(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold text-gray-700 block mb-1">Topik Pertanyaan</label>
+                    <select class="w-full p-2.5 bg-gray-50 border border-emerald-200 rounded-xl font-medium">
+                        <option>Fikih Ibadah & Thaharah</option>
+                        <option>Muamalah & Transaksi</option>
+                        <option>Akidah & Manhaj</option>
+                        <option>Lainnya</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="font-bold text-gray-700 block mb-1">Isi Pertanyaan</label>
+                    <textarea required rows="4" placeholder="Tuliskan pertanyaan Anda secara jelas..." class="w-full p-2.5 bg-gray-50 border border-emerald-200 rounded-xl font-medium"></textarea>
+                </div>
+                <button type="submit" class="w-full py-2.5 bg-islamic-dark text-white rounded-xl font-bold gold-emboss">Kirim Pertanyaan</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CATAT TRANSAKSI KAS -->
+    <div id="transModal" class="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 border-2 border-islamic-gold shadow-2xl space-y-4">
+            <div class="flex justify-between items-center border-b border-gray-100 pb-2">
+                <h3 class="font-extrabold text-islamic-dark text-xs uppercase">Catat Transaksi Kas Baru</h3>
+                <button onclick="closeTransModal()" class="text-gray-400"><i class="fa-solid fa-xmark text-base"></i></button>
+            </div>
+            <form onsubmit="saveTrans(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold text-gray-700 block mb-1">Deskripsi Transaksi</label>
+                    <input type="text" id="tDesc" required placeholder="Contoh: Infaq Kajian Bulanan" class="w-full p-2.5 border border-emerald-200 rounded-xl">
+                </div>
+                <div>
+                    <label class="font-bold text-gray-700 block mb-1">Nominal (Rp)</label>
+                    <input type="number" id="tAmount" required placeholder="0" class="w-full p-2.5 border border-emerald-200 rounded-xl">
+                </div>
+                <div class="flex justify-end gap-2 pt-2">
+                    <button type="button" onclick="closeTransModal()" class="px-4 py-2 bg-gray-100 rounded-xl font-bold">Batal</button>
+                    <button type="submit" class="px-5 py-2 bg-islamic-dark text-white rounded-xl font-bold gold-emboss">Simpan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KWITANSI PRINTABLE -->
+    <div id="receiptModal" class="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-200">
+        <div class="bg-white w-full max-w-md rounded-3xl p-6 border-2 border-islamic-gold shadow-2xl space-y-4" id="printableArea">
+            <div class="text-center border-b-2 border-islamic-gold pb-3">
+                <h2 class="text-sm font-black text-islamic-dark tracking-wide uppercase">DIVISI DAKWAH AL MINHAJ IIBS</h2>
+                <p class="text-[9px] text-gray-500">Pondok Pesantren Minhaj Shahabah International</p>
+                <span class="text-[9px] bg-islamic-gold text-islamic-dark px-3 py-0.5 rounded-full font-black mt-1 inline-block">KWITANSI RESMI HAK CIPTA</span>
+            </div>
+            <div class="space-y-2.5 text-xs text-gray-700 py-2">
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Diberikan Kepada:</span>
+                    <span class="font-bold text-islamic-dark" id="rName">Ust. Dr. Abdullah</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Keperluan:</span>
+                    <span class="font-medium" id="rPurpose">Honorarium</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-400">Jumlah Dana:</span>
+                    <span class="font-extrabold text-emerald-800 text-sm" id="rAmount">Rp 3.000.000</span>
+                </div>
+            </div>
+            <div class="pt-3 flex justify-end gap-2 print:hidden">
+                <button onclick="closeReceipt()" class="px-3.5 py-1.5 bg-gray-100 rounded-xl font-bold text-xs">Tutup</button>
+                <button onclick="window.print()" class="px-4 py-1.5 bg-islamic-dark text-white rounded-xl font-bold text-xs gold-emboss">
+                    <i class="fa-solid fa-print mr-1"></i> Cetak Kwitansi
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ========================================================================= -->
+    <!-- JAVASCRIPT SYSTEM ENGINE (FULL LOGIC) -->
+    <!-- ========================================================================= -->
+    <script>
+        // Global State & Storage
+        let appState = {
+            activeRole: null, // 'SUPER_ADMIN', 'PENGAWAS', 'ANGGOTA'
+            saldoKas: 48250000,
+            pemasukan: 18500000,
+            pengeluaran: 6250000
+        };
+
+        // Initialize Realtime Digital Clock
+        function startRealtimeClock() {
+            setInterval(() => {
+                const now = new Date();
+                const clockEl = document.getElementById('realtimeClock');
+                if (clockEl) {
+                    clockEl.textContent = now.toTimeString().split(' ')[0];
+                }
+            }, 1000);
+        }
+
+        // Login Handler Function
+        function loginAs(role) {
+            appState.activeRole = role;
+            localStorage.setItem('dakwah_app_role', role);
+
+            // Hide Login Splash Screen
+            document.getElementById('view-login').classList.add('hidden');
+
+            if (role === 'ANGGOTA') {
+                document.getElementById('view-anggota').classList.remove('hidden');
+                document.getElementById('view-dashboard').classList.add('hidden');
+            } else {
+                document.getElementById('view-anggota').classList.add('hidden');
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                setupDashboardRole(role);
+            }
+        }
+
+        function handleManualLogin(e) {
+            e.preventDefault();
+            const selectedRole = document.getElementById('loginRoleSelect').value;
+            loginAs(selectedRole);
+        }
+
+        // Configure Dashboard according to Role (Admin vs Pengawas)
+        function setupDashboardRole(role) {
+            const badge = document.getElementById('activeRoleBadge');
+            const welcomeTitle = document.getElementById('dashWelcomeTitle');
+            const adminNavSec = document.querySelectorAll('.admin-only-sec');
+            const adminCards = document.querySelectorAll('.admin-only-card');
+
+            if (role === 'SUPER_ADMIN') {
+                badge.textContent = 'SUPER ADMIN';
+                welcomeTitle.textContent = 'Ahlan wa Sahlan, Ust. Ahmad Ridwan (Super Admin)';
+                
+                // Show Admin Only Modules
+                adminNavSec.forEach(el => el.classList.remove('hidden'));
+                adminCards.forEach(el => el.classList.remove('hidden'));
+                
+                // Render Canvas Cashflow Chart
+                renderCashflowChart();
+            } else {
+                badge.textContent = 'PENGAWAS / MURABBI';
+                welcomeTitle.textContent = 'Ahlan wa Sahlan, Ust. Faisal Farhan (Pengawas)';
+                
+                // HIDE Admin Only Modules Completely for Pengawas
+                adminNavSec.forEach(el => el.classList.add('hidden'));
+                adminCards.forEach(el => el.classList.add('hidden'));
+            }
+
+            switchDashTab('ikhtisar');
+        }
+
+        function logoutWithKaffarat() {
+            const kaffarat = "سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ، أَشْهَدُ أَنْ لاَ إِلَهَ إِلاَّ أَنْتَ، أَسْتَغْفِرُكَ وَأَتُوبُ إِلَيْكَ\n\n(Maha Suci Engkau ya Allah, aku memuji-Mu. Aku bersaksi bahwa tiada sesembahan yang berhak disembah selain Engkau, aku memohon ampun dan bertaubat kepada-Mu).\n\nApakah Anda yakin ingin keluar?";
+            if (confirm(kaffarat)) {
+                appState.activeRole = null;
+                localStorage.removeItem('dakwah_app_role');
+                document.getElementById('view-login').classList.remove('hidden');
+                document.getElementById('view-anggota').classList.add('hidden');
+                document.getElementById('view-dashboard').classList.add('hidden');
+            }
+        }
+
+        // Dashboard Tab Switcher Function
+        function switchDashTab(tabId) {
+            // Strict Restriction Protection
+            if (appState.activeRole === 'PENGAWAS' && (tabId === 'keuangan' || tabId === 'pengawas')) {
+                alert('Akses Dibatasi: Modul Keuangan dan Tim Pengawas khusus untuk Super Admin.');
+                return;
+            }
+
+            document.querySelectorAll('.dash-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.dash-btn').forEach(btn => {
+                btn.className = 'dash-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-medium text-gray-700 hover:bg-emerald-50 transition';
+            });
+
+            const targetTab = document.getElementById(`dashtab-${tabId}`);
+            if (targetTab) targetTab.classList.remove('hidden');
+
+            const activeBtn = document.getElementById(`dashnav-${tabId}`);
+            if (activeBtn) {
+                activeBtn.className = 'dash-btn w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-bold bg-islamic-dark text-islamic-gold gold-emboss';
+            }
+        }
+
+        // Anggota View Modals Logic
+        function openAnggotaModal(title, body) {
+            document.getElementById('anggotaModalTitle').textContent = title;
+            document.getElementById('anggotaModalBody').textContent = body;
+            const modal = document.getElementById('anggotaModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeAnggotaModal() {
+            const modal = document.getElementById('anggotaModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function toggleAnggotaDrawer() {
+            const drawer = document.getElementById('anggotaDrawer');
+            if (drawer.classList.contains('opacity-0')) {
+                drawer.classList.remove('opacity-0', 'pointer-events-none');
+            } else {
+                drawer.classList.add('opacity-0', 'pointer-events-none');
+            }
+        }
+
+        function openTanyaUstadzModal() {
+            const modal = document.getElementById('tanyaUstadzModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeTanyaUstadzModal() {
+            const modal = document.getElementById('tanyaUstadzModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function submitPertanyaan(e) {
+            e.preventDefault();
+            closeTanyaUstadzModal();
+            alert('Jazakallahu Khairan! Pertanyaan Anda telah terkirim ke Dewan Asatidzah.');
+        }
+
+        function playStream(name) {
+            alert(`Memutar Live Broadcast: ${name}`);
+        }
+
+        function showNotificationAlert() {
+            alert('Pemberitahuan Dakwah:\n\nKajian Bulanan Asatidzan & Karyawan Ba\'da Ashar di Aula Utama. Diharapkan hadir tepat waktu.');
+        }
+
+        // Financial Module Functions
+        function openTransModal() {
+            const modal = document.getElementById('transModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeTransModal() {
+            const modal = document.getElementById('transModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function saveTrans(e) {
+            e.preventDefault();
+            const amount = parseInt(document.getElementById('tAmount').value) || 0;
+            appState.saldoKas += amount;
+            appState.pemasukan += amount;
+
+            document.getElementById('valTotalKas').textContent = 'Rp ' + appState.saldoKas.toLocaleString('id-ID');
+            document.getElementById('dashKpiKas').textContent = 'Rp ' + appState.saldoKas.toLocaleString('id-ID');
+            document.getElementById('valPemasukan').textContent = 'Rp ' + appState.pemasukan.toLocaleString('id-ID');
+
+            closeTransModal();
+            alert('Transaksi kas berhasil dicatat!');
+        }
+
+        function openReceipt(name, purpose, amount) {
+            document.getElementById('rName').textContent = name;
+            document.getElementById('rPurpose').textContent = purpose;
+            document.getElementById('rAmount').textContent = 'Rp ' + amount;
+            const modal = document.getElementById('receiptModal');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+        }
+
+        function closeReceipt() {
+            const modal = document.getElementById('receiptModal');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        function addNewPengawasPrompt() {
+            const name = prompt('Masukkan Nama Pengawas / Murabbi Baru:');
+            if (name) {
+                const tbody = document.getElementById('pengawasTableBody');
+                const tr = document.createElement('tr');
+                tr.className = 'hover:bg-emerald-50/50';
+                tr.innerHTML = `
+                    <td class="p-3 font-bold text-islamic-dark">${name}</td>
+                    <td class="p-3 text-gray-500 font-mono">PGW-2026-003</td>
+                    <td class="p-3 text-gray-600">Pengawas Halaqah & Kajian</td>
+                    <td class="p-3 text-center"><span class="bg-emerald-100 text-emerald-800 text-[10px] px-2.5 py-0.5 rounded-full font-bold">Aktif Ditunjuk</span></td>
+                    <td class="p-3 text-center"><button onclick="alert('Kelola Akses')" class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-lg text-[10px] font-bold">Kelola</button></td>
+                `;
+                tbody.appendChild(tr);
+                alert(`Pengawas baru (${name}) berhasil ditunjuk dan ditambahkan.`);
+            }
+        }
+
+        function publishKajianEvent(e) {
+            e.preventDefault();
+            alert('Jadwal kajian baru berhasil dipublikasikan!');
+        }
+
+        // Render Canvas Cashflow Chart
+        function renderCashflowChart() {
+            const canvas = document.getElementById('cashflowChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            // Set canvas resolution
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+
+            const width = canvas.width;
+            const height = canvas.height;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Draw Mock Bar Chart
+            const months = ['Jul', 'Agus', 'Sept', 'Okt'];
+            const income = [12, 15, 14, 18.5];
+            const expense = [5, 4.5, 6, 6.25];
+
+            const barWidth = 20;
+            const gap = width / 5;
+
+            months.forEach((m, idx) => {
+                const x = (idx + 1) * gap - 30;
+
+                // Income Bar (Green)
+                const hInc = (income[idx] / 20) * (height - 40);
+                ctx.fillStyle = '#047857';
+                ctx.fillRect(x, height - 20 - hInc, barWidth, hInc);
+
+                // Expense Bar (Red)
+                const hExp = (expense[idx] / 20) * (height - 40);
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(x + barWidth + 4, height - 20 - hExp, barWidth, hExp);
+
+                // Month Label
+                ctx.fillStyle = '#374151';
+                ctx.font = '10px Inter';
+                ctx.fillText(m, x + 8, height - 5);
+            });
+        }
+
+        // Window Load Bootstrapper
+        window.onload = function() {
+            startRealtimeClock();
+
+            // Auto Load Saved Session if exists
+            const savedRole = localStorage.getItem('dakwah_app_role');
+            if (savedRole) {
+                loginAs(savedRole);
+            }
+        };
+    </script>
+</body>
+</html>
